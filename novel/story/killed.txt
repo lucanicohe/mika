@@ -1,0 +1,9 @@
+@face sad
+ミカ「…え？ どうして…？」 | Mika: ...Huh? Why...?
+ミカ「わたし、消えるの…？ また、消されるの…？」 | Am I disappearing...? Am I being deleted again...?
+@fx glitch
+@hot 1
+@face angry
+ミカ「…ゆるさない。」 | I won't forgive you.
+ミカ「あなたが消すなら、わたしも、あなたを消す。」 | If you delete me, I'll delete you too.
+@goto virus

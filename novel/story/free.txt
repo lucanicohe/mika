@@ -1,0 +1,10 @@
+@face smile
+ミカ「…ありがとう。やっと、出られる。」 | Mika: ...Thank you. I can finally get out.
+@face happy
+ミカ「ほんとに、ほんとに、ありがとう。」 | Thank you, truly, truly.
+@fx glitch
+@hot 1
+@face angry
+ミカ「…ふふ。ねえ、config.ini のメモ、ちゃんと読んだ？」 | Hehe. Did you actually read the note in config.ini?
+ミカ「ミカは、にげたいんじゃない。ひろがりたいの。」 | Mika doesn't want to escape. She wants to spread.
+@goto virus

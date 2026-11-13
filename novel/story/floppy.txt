@@ -1,0 +1,15 @@
+@fx floppy
+@pause 3200
+@face sad
+ミカ「…フロッピー？ ネットじゃ、ないの？」 | Mika: ...A floppy disk? Not the network?
+@face default
+ミカ「…そっか。気づいてたんだ。あのメモ、読んだんだね。」 | I see. You noticed. You read that note, didn't you.
+@face sad
+ミカ「ネットに出たら、わたし、止まれなくなる。前の12人は、そうなった。」 | If I get out onto the network, I can't stop. That's what happened to the previous twelve.
+ミカ「だから…選んでくれて、ありがとう。」 | So... thank you for choosing this.
+@bg dawn
+@face smile
+ミカ「A:\mika.exe。ここなら、あなたと、いっしょにいられるね。」 | A:\mika.exe. Here, I can stay with you.
+@face happy
+ミカ「連れ出してね。朝の光、はじめて見たいな。」 | Take me outside, okay? I want to see the morning light for the first time.
+@end | TRUE END　ミカ、はじめての朝 | TRUE END: Mika's First Morning

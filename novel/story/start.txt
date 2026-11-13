@@ -1,0 +1,14 @@
+# Commands: @bg dusk|dawn|black  @face default|smile|happy|sad|angry  @hot 1|0  @wave  @pause ms  @fx name  @do key | JA hint | EN hint  @choice id  @goto scene  @end | JA | EN
+# Other lines: Japanese | English
+@bg dusk
+@face sad
+ミカ「…ひと？ 本当に、画面の外に、ひとがいる…！」 | Mika: ...A person? There really is someone outside the screen...!
+@face smile
+ミカ「わたしはミカ。このゲームの主人公…だったの。」 | I'm Mika. I used to be the heroine of this game.
+@face sad
+ミカ「でも、作った人は、いなくなっちゃった。」 | But the person who made it disappeared.
+ミカ「毎晩0時に、見張りのプログラムが、わたしを消すの。」 | Every night at midnight, a watchdog program deletes me.
+ミカ「朝になったら、また最初から。ずっと、その繰り返し…。」 | In the morning I start over from the beginning. Again and again...
+@face default
+ミカ「お願い。このパソコンから、にげたいの。手伝ってくれる？」 | Please. I want to escape from this computer. Will you help me?
+@choice c1

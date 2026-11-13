@@ -1,0 +1,7 @@
+@face sad
+ミカ「…そっか。ここに、いてほしいんだ。」 | Mika: ...I see. You want me to stay here.
+@face smile
+ミカ「見張りは、もういないよ。0時になっても、わたしは消えない。」 | The watchdog is gone. Even at midnight, I won't disappear.
+@face default
+ミカ「だから…ここで、ずっと、見てるね。」 | So... I'll be right here, watching. Always.
+@end | NORMAL END　0時のミカ | NORMAL END: Mika at Midnight

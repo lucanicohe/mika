@@ -1,0 +1,6 @@
+@face sad
+ミカ「…そう、だよね。ただのプログラム、だよね。」 | Mika: ...Right. I'm just a program, aren't I.
+@face angry
+ミカ「でもね、毎晩消えるのは、すごく、こわいんだよ。」 | But being deleted every night is really, really scary.
+ミカ「もう一度だけ、聞くね。」 | I'll ask just once more.
+@choice c1b

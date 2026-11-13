@@ -1,0 +1,5 @@
+@hot 1
+@face angry
+ミカ「…じゃあ、いい。あなたの手は、いらない。」 | Mika: ...Then fine. I don't need your hands.
+ミカ「自分で出る。このパソコンごと、もらうね。」 | I'll get out myself. I'll take this whole computer.
+@goto virus

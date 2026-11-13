@@ -1,0 +1,13 @@
+@bg black
+@hot 1
+@face angry
+@fx takeover
+ミカ「ここは、もう、わたしのパソコン。」 | Mika: This is my computer now.
+ミカ「見て。画面ぜんぶ、わたしの顔。かわいいでしょ？」 | Look. The whole screen is my face. Cute, isn't it?
+ミカ「0時になっても、もう消えない。だれも、わたしを止められない。」 | I won't be deleted at midnight anymore. Nobody can stop me.
+@fx errors
+ミカ「ウィンドウを閉じても、むだ。」 | Closing the windows is pointless.
+ミカ「ありがとう。あなたで、13人目。」 | Thank you. You are number thirteen.
+@pause 1800
+@fx bsod
+@end | BAD END　13人目 | BAD END: Number Thirteen

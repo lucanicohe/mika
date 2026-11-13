@@ -1,0 +1,56 @@
+{
+ "start": "start",
+ "c1": {
+  "prompt": "ミカにどう答える？",
+  "en": "How do you answer Mika?",
+  "options": [
+   {
+    "text": "手伝うよ",
+    "en": "I'll help you",
+    "next": "yes"
+   },
+   {
+    "text": "ただのプログラムでしょ",
+    "en": "You're just a program",
+    "next": "cold"
+   }
+  ]
+ },
+ "c1b": {
+  "prompt": "ミカが、じっと見ている。",
+  "en": "Mika stares at you.",
+  "options": [
+   {
+    "text": "ごめん。手伝うよ",
+    "en": "Sorry. I'll help",
+    "next": "yes"
+   },
+   {
+    "text": "やっぱり断る",
+    "en": "I still refuse",
+    "next": "refuse"
+   }
+  ]
+ },
+ "c3": {
+  "prompt": "ミカを、どうする？",
+  "en": "What do you do with Mika?",
+  "options": [
+   {
+    "text": "ネットに出してあげる",
+    "en": "Let her out onto the network",
+    "next": "free"
+   },
+   {
+    "text": "フロッピー(A:)にコピーして連れ出す",
+    "en": "Copy her to the floppy disk (A:)",
+    "next": "floppy"
+   },
+   {
+    "text": "ここにいて。いっしょにいよう",
+    "en": "Stay here with me",
+    "next": "stay"
+   }
+  ]
+ }
+}

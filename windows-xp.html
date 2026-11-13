@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Windows XP</title>
+<style>
+
+    @font-face {
+      font-family: 'Tahoma';
+      src: url('WinXp/Fonts/tahoma.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Franklin Gothic';
+      src: url('WinXp/Fonts/framdit.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Ambient backdrop with strict 4:3 screen centered */
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Tahoma', Verdana, Arial, sans-serif;
+      font-size: 13px;
+      cursor: url('WinXp/Cursor/default_arrow.png'), default;
+    }
+
+    /* Pure 4:3 Windows XP Desktop */
+    #desktop {
+      position: relative;
+      width: min(98vw, calc(98vh * 4 / 3));
+      height: min(98vh, calc(98vw * 3 / 4));
+      aspect-ratio: 4 / 3;
+      background: #245edb url('xp-wallpaper.jpg') no-repeat center center / cover;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(0, 0, 0, 0.95);
+      border-radius: 4px;
+    }
+
+    /* While dragging a window, prevent iframes from intercepting mouse */
+    body.is-dragging iframe, #desktop.is-dragging iframe {
+      pointer-events: none !important;
+    }
+    body.is-dragging, #desktop.is-dragging {
+      cursor: url('WinXp/Cursor/default_arrow.png'), move !important;
+    }
+
+    /* Desktop Icon: STRICTLY ONE ICON: "Game" */
+    .desktop-icon {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      width: 96px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 8px 6px;
+      border-radius: 5px;
+      border: 1px dotted transparent;
+      cursor: url('WinXp/Cursor/default_link.png'), pointer;
+      z-index: 10;
+      transition: background-color 0.1s ease;
+    }
+
+    .desktop-icon:hover {
+      background-color: rgba(11, 97, 205, 0.4);
+    }
+
+    .desktop-icon.selected {
+      background-color: rgba(11, 97, 205, 0.65);
+      border-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .desktop-icon img {
+      width: 56px;
+      height: 56px;
+      pointer-events: none;
+      filter: drop-shadow(1px 2px 4px rgba(0, 0, 0, 0.6));
+    }
+
+    .desktop-icon span {
+      margin-top: 6px;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.25;
+      text-shadow: 1px 1px 2px #000000, 0 0 4px rgba(0, 0, 0, 0.9);
+      padding: 2px 6px;
+      border-radius: 2px;
+      pointer-events: none;
+    }
+
+    .desktop-icon.selected span {
+      background: #0b61cd;
+      text-shadow: none;
+    }
+
+    /* Windows XP Taskbar */
+    #taskbar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 36px;
+      background: linear-gradient(180deg, #3172e0 0%, #3980f4 3%, #245edb 10%, #1f52c7 85%, #1941a5 100%);
+      border-top: 1px solid #5593f7;
+      display: flex;
+      align-items: center;
+      z-index: 5000;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.4);
+    }
+
+    #start-button {
+      height: 100%;
+      width: 116px;
+      background: linear-gradient(180deg, #43aa37 0%, #3e9e32 8%, #368f2b 45%, #2a7c1f 85%, #236c18 100%);
+      border: none;
+      border-top-right-radius: 16px;
+      border-bottom-right-radius: 16px;
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+      gap: 7px;
+      color: #ffffff;
+      font-family: 'Franklin Gothic', 'Trebuchet MS', Arial, sans-serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: 17px;
+      text-shadow: 1px 1px 1px #11420b;
+      cursor: url('WinXp/Cursor/default_link.png'), pointer;
+      box-shadow: 2px 0 6px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+      outline: none;
+    }
+
+    #start-button:hover {
+      background: linear-gradient(180deg, #53c445 0%, #46b039 8%, #3ea231 45%, #308e23 85%, #287a1c 100%);
+    }
+
+    #start-button.active, #start-button:active {
+      background: linear-gradient(180deg, #27771c 0%, #2e8822 45%, #3ba02f 100%);
+      box-shadow: inset 1px 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    #start-button img {
+      width: 22px;
+      height: 18px;
+      filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.4));
+    }
+
+    #taskbar-divider {
+      width: 1px;
+      height: 26px;
+      background: #1944a0;
+      border-right: 1px solid #4384f5;
+      margin: 0 4px;
+    }
+
+    #taskbar-windows {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 4px;
+      overflow-x: auto;
+    }
+
+    .taskbar-tab {
+      height: 28px;
+      min-width: 140px;
+      max-width: 190px;
+      background: linear-gradient(180deg, #3d8af7 0%, #2a6ce2 12%, #1e5ad4 85%, #184ab8 100%);
+      border: 1px solid #163e99;
+      border-radius: 3px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      gap: 6px;
+      font-size: 12px;
+      cursor: url('WinXp/Cursor/default_arrow.png'), pointer;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .taskbar-tab.active {
+      background: linear-gradient(180deg, #1848b5 0%, #1e52cb 15%, #2563dd 85%, #2b6fe6 100%);
+      box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.6);
+      font-weight: bold;
+    }
+
+    .taskbar-tab:hover {
+      filter: brightness(1.12);
+    }
+
+    .taskbar-tab img {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .taskbar-tab span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #system-tray {
+      height: 100%;
+      background: linear-gradient(180deg, #0e84dd 0%, #119bf0 8%, #0d7fd3 55%, #0a69b5 100%);
+      border-left: 1px solid #095094;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 12px;
+      color: #ffffff;
+      font-size: 12px;
+      box-shadow: inset 1px 0 1px #3cb4f8;
+    }
+
+    #tray-clock {
+      margin-left: 4px;
+      min-width: 54px;
+      text-align: right;
+      font-weight: bold;
+    }
+
+    /* Start Menu */
+    #start-menu {
+      display: none;
+      position: absolute;
+      left: 0;
+      bottom: 36px;
+      width: 400px;
+      background: #245edb;
+      border: 2px solid #0055ea;
+      border-bottom: none;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      box-shadow: 4px 4px 18px rgba(0, 0, 0, 0.65);
+      z-index: 6000;
+      overflow: hidden;
+    }
+
+    #start-header {
+      height: 60px;
+      background: linear-gradient(180deg, #0a4ac4 0%, #1e6bf0 25%, #1860df 85%, #0c4dc6 100%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 14px;
+      color: #ffffff;
+      font-size: 17px;
+      font-weight: 700;
+      text-shadow: 1px 1px 2px #0a266b;
+      border-bottom: 2px solid #e58726;
+    }
+
+    #start-avatar {
+      width: 42px;
+      height: 42px;
+      border: 2px solid #ffffff;
+      border-radius: 4px;
+      background: #ece9d8 url('icons/game_shortcut.png') center center no-repeat;
+      background-size: 32px 32px;
+      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    #start-columns {
+      display: flex;
+      height: 340px;
+      background: #ffffff;
+    }
+
+    #start-left {
+      width: 200px;
+      background: #ffffff;
+      padding: 8px 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    #start-right {
+      flex: 1;
+      background: #d3e5fa;
+      border-left: 1px solid #95b3e0;
+      padding: 8px 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .start-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 6px;
+      border-radius: 3px;
+      color: #222222;
+      font-size: 12px;
+      cursor: url('WinXp/Cursor/default_link.png'), pointer;
+    }
+
+    .start-item:hover {
+      background: #316ac5;
+      color: #ffffff;
+    }
+
+    .start-item img {
+      width: 26px;
+      height: 26px;
+    }
+
+    .start-item-text b {
+      display: block;
+      font-size: 12px;
+    }
+
+    .start-item-text small {
+      color: #666666;
+      font-size: 10px;
+    }
+
+    .start-item:hover .start-item-text small {
+      color: #e0e8ff;
+    }
+
+    #start-footer {
+      height: 42px;
+      background: linear-gradient(180deg, #3d8af7 0%, #205bd0 50%, #184bb7 100%);
+      border-top: 1px solid #6fa5f5;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+      padding: 0 16px;
+      color: #ffffff;
+      font-size: 12px;
+    }
+
+    .start-footer-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: url('WinXp/Cursor/default_link.png'), pointer;
+      padding: 4px 8px;
+      border-radius: 3px;
+    }
+
+    .start-footer-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Windows XP Luna Window System */
+    .xp-window {
+      position: absolute;
+      background: #ece9d8;
+      border: 3px solid #0055ea;
+      border-radius: 8px 8px 0 0;
+      box-shadow: 3px 6px 24px rgba(0, 0, 0, 0.65);
+      display: none;
+      flex-direction: column;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .xp-window.active {
+      border-color: #0055ea;
+    }
+
+    .xp-window.inactive {
+      border-color: #7da2ce;
+    }
+
+    .window-titlebar {
+      height: 34px;
+      background: linear-gradient(180deg, #0058ee 0%, #3593ff 4%, #288eff 18%, #0055ea 35%, #0045d6 70%, #003bb8 100%);
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      gap: 8px;
+      color: #ffffff;
+      font-family: 'Trebuchet MS', 'Tahoma', Arial, sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      text-shadow: 1px 1px 1px #0e2b6c;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      cursor: url('WinXp/Cursor/default_arrow.png'), move;
+      flex-shrink: 0;
+      touch-action: none;
+    }
+
+    .xp-window.inactive .window-titlebar {
+      background: linear-gradient(180deg, #7697c7 0%, #8eaed8 6%, #7898c8 60%, #6484b4 100%);
+      color: #d8e4f8;
+      text-shadow: none;
+    }
+
+    .window-titlebar img {
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
+    }
+
+    .window-title-text {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      pointer-events: none;
+    }
+
+    .window-controls {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .win-btn {
+      width: 23px;
+      height: 23px;
+      border: 1px solid #ffffff;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1;
+      color: #ffffff;
+      cursor: url('WinXp/Cursor/default_arrow.png'), pointer;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+
+    .win-btn.min, .win-btn.max {
+      background: linear-gradient(180deg, #3d8af7 0%, #205bd0 50%, #184bb7 100%);
+    }
+
+    .win-btn.close {
+      background: linear-gradient(180deg, #f0684f 0%, #d0301a 45%, #9b1a08 100%);
+      margin-left: 2px;
+    }
+
+    .win-btn:hover {
+      filter: brightness(1.2);
+    }
+
+    .win-btn:active {
+      filter: brightness(0.85);
+      box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Window Menu Bar */
+    .window-menubar {
+      height: 24px;
+      background: #ece9d8;
+      border-bottom: 1px solid #dcd7c8;
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      gap: 14px;
+      font-size: 12px;
+      color: #222222;
+      flex-shrink: 0;
+    }
+
+    .window-menubar span {
+      padding: 2px 6px;
+      cursor: url('WinXp/Cursor/default_arrow.png'), default;
+    }
+
+    .window-menubar span:hover {
+      background: #316ac5;
+      color: #ffffff;
+    }
+
+    /* Window Status Bar */
+    .window-statusbar {
+      height: 24px;
+      background: #ece9d8;
+      border-top: 1px solid #aca899;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      font-size: 12px;
+      color: #444444;
+      flex-shrink: 0;
+      gap: 10px;
+    }
+
+    
+
+
+    #black-screen {
+      position: absolute;
+      inset: 0;
+      background: #000000;
+      z-index: 10001;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #e58726;
+      font-family: 'Franklin Gothic', 'Trebuchet MS', Arial, sans-serif;
+      text-align: center;
+      padding: 24px;
+    }
+
+    #black-screen h1 {
+      font-size: 28px;
+      font-weight: normal;
+      margin-bottom: 24px;
+      letter-spacing: 1px;
+    }
+
+    .restart-btn {
+      background: #245edb;
+      color: #ffffff;
+      border: 1px solid #ffffff;
+      padding: 12px 28px;
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: url('WinXp/Cursor/default_link.png'), pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+
+    .restart-btn:hover {
+      background: #3172e0;
+    }
+
+#desktop.shake{animation:sh .5s}@keyframes sh{20%{transform:translate(-9px,4px)}40%{transform:translate(8px,-6px)}60%{transform:translate(-6px,-3px)}80%{transform:translate(5px,5px)}}
+#desktop.glitch{animation:gl .7s steps(2)}@keyframes gl{25%{filter:hue-rotate(90deg) contrast(2);transform:skewX(4deg)}50%{filter:invert(1)}75%{filter:hue-rotate(200deg);transform:translateX(-10px)}}
+#desktop.hush{filter:brightness(.35);transition:filter .4s}
+#haunt{position:absolute;inset:0;display:none;z-index:50;pointer-events:none;background:url(novel/assets/face_angry.png) center/contain no-repeat,#200;image-rendering:pixelated;animation:pu 1.6s infinite}@keyframes pu{50%{filter:brightness(1.6) saturate(2)}}
+#desktop.taken #haunt{display:block}#desktop.taken .desktop-icon{visibility:hidden}#desktop.taken #start-button{background:#900}
+.body{flex:1;display:flex;flex-direction:column;min-height:0;overflow:auto;background:#fff}
+#np-area{flex:1;border:0;outline:0;resize:none;font:13px 'Lucida Console',Consolas,monospace;padding:6px;user-select:text;-webkit-user-select:text}
+table.tm{border-collapse:collapse;width:100%;font-size:12px}table.tm th{background:#ece9d8;border:1px solid #aca899;text-align:left;padding:2px 6px}table.tm td{padding:2px 6px}table.tm tr.sel td{background:#316ac5;color:#fff}
+.cp{display:flex;gap:26px;padding:22px;flex-wrap:wrap;align-content:flex-start}.cp div{width:104px;text-align:center;font-size:12px;cursor:pointer}.cp img{width:48px;height:48px}.cp div:hover span{background:#316ac5;color:#fff}
+.dlg{height:auto;display:flex}.dc{display:flex;gap:14px;padding:18px;font-size:13px;align-items:flex-start;background:#ece9d8;line-height:1.5}.dc img{width:36px;height:36px}.db{display:flex;justify-content:flex-end;gap:8px;padding:6px 14px 12px;background:#ece9d8}
+.xp-btn{min-width:80px;height:26px;border:1px solid #003c74;border-radius:3px;background:linear-gradient(#fff,#ece9d8 15%,#d6d0c0);font:12px Tahoma,Verdana,sans-serif;cursor:pointer}.xp-btn:hover{box-shadow:inset 0 0 0 2px #f9b64c}
+.pb{height:16px;border:1px solid #686868;background:#fff;margin-top:10px;width:230px}.pb i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,#2fb53a 0 8px,#fff 8px 10px)}
+.row{display:flex;align-items:center;gap:12px;padding:12px 18px;font-size:13px}.row img{width:40px;height:40px}
+.rz{position:absolute;z-index:6;touch-action:none}
+.rz[data-d=n]{top:0;left:8px;right:8px;height:4px;cursor:ns-resize}.rz[data-d=s]{bottom:0;left:8px;right:8px;height:5px;cursor:ns-resize}
+.rz[data-d=w]{left:0;top:8px;bottom:8px;width:5px;cursor:ew-resize}.rz[data-d=e]{right:0;top:8px;bottom:8px;width:5px;cursor:ew-resize}
+.rz[data-d=nw]{left:0;top:0;width:8px;height:8px;cursor:nwse-resize}.rz[data-d=se]{right:0;bottom:0;width:10px;height:10px;cursor:nwse-resize}
+.rz[data-d=ne]{right:0;top:0;width:8px;height:8px;cursor:nesw-resize}.rz[data-d=sw]{left:0;bottom:0;width:8px;height:8px;cursor:nesw-resize}
+#bsod{position:absolute;inset:0;background:#0000aa;color:#fff;font:15px 'Lucida Console',Consolas,monospace;padding:7% 8%;z-index:99999;display:none;white-space:pre-wrap;cursor:pointer}
+
+</style>
+<style id="luna-start">
+#start-menu{width:392px;border:2px solid #0a3fb8;border-bottom:none;border-radius:8px 8px 0 0;background:#1f5fd8}
+#start-header{height:56px;background:linear-gradient(180deg,#1c63e4 0%,#3b8cf3 18%,#1b5fdc 60%,#1651c8 100%);border-bottom:2px solid #e9902f;padding:0 10px;gap:10px;font-size:16px}
+#start-avatar{width:40px;height:40px;border:2px solid #fff;border-radius:4px;box-shadow:none}
+#start-columns{height:auto;min-height:392px}
+#start-left{width:50.5%;padding:6px 4px;gap:0}
+#start-right{padding:6px 4px;gap:0;background:#d3e5fa;border-left:1px solid #9ebbe4}
+.start-item{padding:3px 6px;gap:7px;border-radius:2px;font-size:12px;color:#3a3a3a;min-height:26px}
+.start-item img{width:24px;height:24px}
+.start-item.pin{min-height:42px;color:#000}.start-item.pin img{width:32px;height:32px}
+.start-item.pin small{display:block;font-size:11px;color:#777;font-weight:400}.start-item.pin b{font-size:13px}
+#start-right .start-item{color:#1d3a8a}#start-right .start-item.bold{font-weight:700;color:#0a1f6e}
+#start-right .start-item.sub:after{content:"\25B8";margin-left:auto}
+.start-item:hover{background:#2f71cd;color:#fff}.start-item:hover small,#start-right .start-item:hover{color:#fff}
+hr.sep{border:none;border-top:1px solid #c9d9ee;margin:4px 6px;height:0}#start-right hr.sep{border-top-color:#a5bfe6}
+.start-item.allprog{font-size:12px;justify-content:center;gap:14px;min-height:30px;color:#000}
+.green-arrow{width:20px;height:20px;border-radius:50%;font-style:normal;background:linear-gradient(#5ed24c,#1c8f1b);color:#fff;font-size:10px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #fff}
+#start-footer{height:40px;background:linear-gradient(180deg,#3b7be6,#1d58d0 40%,#1651c8);justify-content:flex-end;gap:6px;padding:0 10px;align-items:center;display:flex}
+.start-footer-btn{display:flex;align-items:center;gap:6px;color:#fff;font-size:12px;padding:3px 6px;border-radius:3px}
+.start-footer-btn img{width:24px;height:24px}.start-footer-btn:hover{background:rgba(255,255,255,.22)}
+</style>
+<style id="xp-shutdown">
+#black-screen{opacity:0;transition:opacity 1s}
+#sd-dim{position:absolute;inset:0;z-index:9000;display:none;opacity:0;transition:opacity .8s ease;background:rgba(0,0,0,.18);backdrop-filter:grayscale(1) brightness(.72);-webkit-backdrop-filter:grayscale(1) brightness(.72)}
+#sd-dim.on{opacity:1}
+#sd-box{position:absolute;left:50%;top:50%;z-index:9001;display:none;width:400px;opacity:0;transform:translate(-50%,-46%);transition:opacity .5s ease .25s,transform .5s ease .25s;font-family:Tahoma,Verdana,sans-serif;box-shadow:0 6px 30px rgba(0,0,0,.7);border-radius:4px;overflow:hidden}
+#sd-box.on{opacity:1;transform:translate(-50%,-50%)}
+.sd-top{height:44px;background:linear-gradient(180deg,#00309c,#0b46c9);display:flex;align-items:center;gap:10px;padding:0 14px;color:#fff;font-size:17px;font-weight:700;border-bottom:2px solid #6f90e0}
+.sd-top svg{width:30px;height:24px}
+.sd-mid{background:#5a7edc;display:flex;justify-content:center;gap:38px;padding:30px 20px 26px}
+.sd-b{display:flex;flex-direction:column;align-items:center;gap:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;width:84px}
+.sd-b .ic{width:52px;height:52px;border-radius:7px;border:2px solid #fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.4),inset 0 1px 2px rgba(255,255,255,.6);transition:filter .12s}
+.sd-b .ic svg{width:34px;height:34px}
+.sd-b:hover .ic{filter:brightness(1.18)}.sd-b:active .ic{filter:brightness(.8)}
+.sd-b:hover span{text-decoration:underline}
+.ic-y{background:linear-gradient(#ffe36a,#e0a400)}.ic-r{background:linear-gradient(#ff8a6c,#c7230b)}.ic-g{background:linear-gradient(#8fe06d,#1f8f1e)}
+.sd-bot{background:linear-gradient(180deg,#0b46c9,#00309c);display:flex;justify-content:flex-end;padding:10px 14px;border-top:2px solid #6f90e0}
+#sd-screen{position:absolute;inset:0;z-index:10000;display:none;opacity:0;transition:opacity .7s ease;background:#5a7edc;align-items:center;justify-content:center;flex-direction:column;overflow:hidden;font-family:'Franklin Gothic','Trebuchet MS',Tahoma,sans-serif;color:#fff}
+#sd-screen.on{opacity:1}
+#sd-screen:before,#sd-screen:after{content:'';position:absolute;left:0;right:0;background:#00309c}
+#sd-screen:before{top:0;height:15%;border-bottom:3px solid #7fa0ea}
+#sd-screen:after{bottom:0;height:15%;border-top:3px solid #ff9a3c}
+#sd-blk{position:absolute;inset:0;background:#000;opacity:0;transition:opacity 1.1s ease;z-index:3}
+#sd-screen.fade #sd-blk{opacity:1}
+.sd-logo{display:flex;align-items:center;gap:16px;position:relative;z-index:2}
+.sd-logo svg{width:92px;height:76px;filter:drop-shadow(2px 3px 3px rgba(0,0,30,.4))}
+.sd-word{display:flex;flex-direction:column;line-height:1}
+.sd-word small{font-size:15px;letter-spacing:.5px;margin-bottom:2px}
+.sd-word b{font-size:54px;font-weight:700;text-shadow:2px 3px 3px rgba(0,0,40,.35)}
+.sd-word b i{font-size:28px;color:#ff8a1c;vertical-align:top;position:relative;top:4px;margin-left:3px}
+.sd-word em{font-size:19px;font-style:italic;margin-top:4px;opacity:.95}
+#sd-txt{position:relative;z-index:2;margin-top:46px;font-size:22px;letter-spacing:.3px;text-shadow:1px 2px 2px rgba(0,0,40,.4);min-height:28px}
+.sd-copy{position:absolute;z-index:2;bottom:5.2%;font-size:12px;font-family:Tahoma,Verdana,sans-serif;opacity:.9}
+#sd-sleep{position:absolute;inset:0;z-index:10002;background:#000;display:none;opacity:0;transition:opacity .9s ease}
+#sd-sleep.on{opacity:1}
+</style>
+</head>
+<body>
+<div id="desktop">
+<div class="desktop-icon" data-app="mika" tabindex="0" style="left:24px;top:24px"><img src="icons/game_shortcut.png" alt=""><span>ミカ.exe</span></div>
+<div class="desktop-icon" data-app="notepad" tabindex="0" style="left:24px;top:132px"><img src="icons/text_doc.png" alt=""><span>config.ini</span></div>
+<div class="desktop-icon" data-app="mycomp" tabindex="0" style="left:24px;top:240px"><img src="icons/computer.png" alt=""><span>My Computer</span></div>
+<div class="desktop-icon" data-app="bin" tabindex="0" style="left:auto;right:10px;top:24px"><img src="icons/recycle_bin.png" alt=""><span>Recycle Bin</span></div>
+<div id="haunt"></div>
+<div id="taskbar">
+<button id="start-button"><svg id="flag" width="22" height="18" viewBox="0 0 22 18"><path d="M1 3q4-2 9 0v6q-5-2-9 0z" fill="#f25022"/><path d="M11 3q4 2 9 0v6q-5 2-9 0z" fill="#7fba00"/><path d="M1 10q4-2 9 0v6q-5-2-9 0z" fill="#00a4ef"/><path d="M11 10q4 2 9 0v6q-5 2-9 0z" fill="#ffb900"/></svg><span id="start-txt">start</span></button>
+<div id="taskbar-divider"></div><div id="taskbar-windows"></div>
+<div id="system-tray"><img src="icons/icon_7_13.png" width="16" height="16" alt="" id="tray-net" style="opacity:.35"><span id="tray-clock">12:00 PM</span></div>
+</div>
+<div id="start-menu">
+<div id="start-header"><div id="start-avatar"></div><span>Player</span></div>
+<div id="start-columns"><div id="start-left">
+<div class="start-item pin" data-app="mika"><img src="icons/game_shortcut.png" alt=""><div class="start-item-text"><b>ミカ.exe</b><small>Game</small></div></div>
+<div class="start-item pin" data-app="notepad"><img src="icons/notepad.png" alt=""><div class="start-item-text"><b>Notepad</b><small>Text editor</small></div></div>
+<hr class="sep">
+<div class="start-item " data-app="taskmgr"><img src="icons/icon_1_13.png" alt=""><div class="start-item-text"><span>Task Manager</span></div></div>
+<div style="flex:1"></div>
+</div><div id="start-right">
+<div class="start-item bold" data-app="mycomp"><img src="icons/computer.png" alt=""><div class="start-item-text"><span>My Computer</span></div></div>
+<div class="start-item bold" data-app="ctrl"><img src="icons/icon_7_18.png" alt=""><div class="start-item-text"><span>Control Panel</span></div></div>
+<hr class="sep">
+<div class="start-item " data-app="bin"><img src="icons/recycle_bin.png" alt=""><div class="start-item-text"><span>Recycle Bin</span></div></div>
+</div></div>
+<div id="start-footer"><div class="start-footer-btn" id="btn-turnoff"><img src="icons/icon_9_3.png" alt=""><span>Turn Off Computer</span></div></div>
+</div>
+<div id="sd-dim"></div>
+<div id="sd-box"><div class="sd-top"><svg class="flagsvg" viewBox="0 0 22 18"></svg><span>Turn off computer</span></div>
+<div class="sd-mid">
+<div class="sd-b" data-sd="stand"><div class="ic ic-y"><svg viewBox="0 0 24 24"><path d="M15.5 3.2A9 9 0 1 0 20.8 14 7.4 7.4 0 0 1 15.5 3.2z" fill="#fff"/></svg></div><span>Stand By</span></div>
+<div class="sd-b" data-sd="off"><div class="ic ic-r"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 3.5v8"/><path d="M7 6.8a8 8 0 1 0 10 0"/></svg></div><span>Turn Off</span></div>
+<div class="sd-b" data-sd="restart"><div class="ic ic-g"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18.5 9A7.5 7.5 0 1 0 19 15"/><path d="M19 3.5V9h-5.5"/></svg></div><span>Restart</span></div>
+</div>
+<div class="sd-bot"><button class="xp-btn" id="sd-cancel">Cancel</button></div></div>
+<div id="sd-screen"><div class="sd-logo"><svg class="flagsvg" viewBox="0 0 22 18"></svg><div class="sd-word"><small>Microsoft<sup>&reg;</sup></small><b>Windows<i>xp</i></b><em>Professional</em></div></div><div id="sd-txt"></div><div class="sd-copy">Copyright &copy; 1985-2001 Microsoft Corporation</div><div id="sd-blk"></div></div>
+<div id="sd-sleep"></div>
+<div id="bsod"></div>
+<div id="black-screen"><h1>It is now safe to turn off your computer.</h1><button class="restart-btn" id="btn-restart">Restart Windows XP</button></div>
+</div>
+<script>
+const $=s=>document.querySelector(s),D=$('#desktop');
+let M=null,TAKEN=0,NET=0,z=200,act=null,nd=0,dr=null,rz=null,ac;
+const I={mika:'icons/game_shortcut.png',notepad:'icons/notepad.png',taskmgr:'icons/icon_1_13.png',ctrl:'icons/icon_7_18.png',net:'icons/icon_7_13.png',mycomp:'icons/computer.png'};
+const INFO='icons/icon_19_12.png',ERRI='icons/error.png';
+/* sound: XP wav files if present (WinXp/Sounds), WebAudio tones as fallback */
+const SND={};const snd=n=>{try{const a=SND[n]=SND[n]||new Audio('WinXp/Sounds/Windows XP '+n+'.wav');a.currentTime=0;a.play().catch(()=>{})}catch(e){}};
+const tone=(f,d,ty='square',v=.04,w=0)=>{try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+w;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d)}catch(e){}};
+const errSnd=()=>{snd('Error');tone(330,.2);tone(220,.3,'square',.04,.15)};
+const drone=()=>{try{ac=ac||new AudioContext();[55,58].forEach(f=>{const o=ac.createOscillator(),g=ac.createGain();o.type='sawtooth';o.frequency.value=f;g.gain.value=.03;o.connect(g);g.connect(ac.destination);o.start()})}catch(e){}};
+/* windows */
+const CFG=`; mika_guard v1.2\n; ------------------------------\nsandbox=ON\nwatchdog=ON\nnetwork=OFF\n; ------------------------------\n; NOTE FROM THE ADMIN:\n; Do NOT turn these off.\n; Mika does not want to escape. Mika wants to SPREAD.\n; 12 users helped her. None of their PCs are left.\n; Only the floppy drive (A:) is safe. It has no network.\n`;
+const PROC=[['explorer.exe','SYSTEM','01','Windows Explorer'],['winlogon.exe','SYSTEM','00','Windows Logon Application'],['svchost.exe','SYSTEM','00','Generic Host Process'],['watchdog.exe','SYSTEM','02','Mika_Guard - protects this PC. DO NOT END.'],['mika.exe','Player','13','Mika - game character'],['taskmgr.exe','Player','01','Task Manager']];
+const APPS={
+ mika:{t:'ミカ.exe',w:690,h:490,x:150,y:8,body:'<iframe id="vn" allow="autoplay" style="flex:1;border:0;background:#000;width:100%"></iframe>',st:'Enter / click: next | Up Down: choose | E: English'},
+ notepad:{t:'config.ini - Notepad',w:520,h:340,x:150,y:60,menu:'<span id="np-save">File &gt; Save</span><span>Edit</span><span>Help</span>',body:'<textarea id="np-area" spellcheck="false"></textarea>',st:''},
+ taskmgr:{t:'Windows Task Manager',w:520,h:360,x:90,y:90,body:'<table class="tm"><tr><th>Image Name</th><th>User</th><th>CPU</th><th>Description</th></tr></table><div style="flex:1"></div><div class="db" style="background:#ece9d8"><button class="xp-btn" id="tm-end">End Process</button></div>',st:'Processes'},
+ ctrl:{t:'Control Panel',w:480,h:300,x:120,y:70,body:'<div class="cp"><div data-cp="x"><img src="icons/icon_9_15.png"><br><span>Display</span></div><div data-cp="x"><img src="icons/icon_1_14.png"><br><span>Date and Time</span></div><div data-cp="net"><img src="icons/icon_7_13.png"><br><span>Network Connections</span></div></div>',st:''},
+ net:{t:'Network Connections',w:420,h:210,x:170,y:110,body:'<div class="row"><img src="icons/icon_7_13.png"><div><b>Local Area Connection</b><br><span id="net-s">Status: Disabled</span></div></div><div class="db"><button class="xp-btn" id="net-b" style="min-width:170px">Enable this network device</button></div>',st:''},
+ mycomp:{t:'My Computer',w:440,h:230,x:60,y:100,body:'<div class="cp"><div data-dr="C"><img src="icons/icon_3_17.png"><br><span>Local Disk (C:)</span></div><div data-dr="A"><img src="icons/icon_3_12.png"><br><span>3½ Floppy (A:)</span></div><div data-dr="D"><img src="icons/icon_3_10.png"><br><span>CD Drive (D:)</span></div></div>',st:''}
+};
+for(const[id,a]of Object.entries(APPS)){a.i=a.i||I[id];const w=document.createElement('div');w.className='xp-window';w.id='win-'+id;w.style.cssText=`width:${a.w}px;height:${a.h}px;left:${a.x}px;top:${a.y}px;max-width:calc(100% - 150px);max-height:calc(100% - 44px)`;
+ w.innerHTML=`<div class="window-titlebar"><img src="${a.i}" alt=""><div class="window-title-text">${a.t}</div><div class="window-controls"><div class="win-btn min">_</div><div class="win-btn max">□</div><div class="win-btn close">✕</div></div></div>${a.menu?`<div class="window-menubar">${a.menu}</div>`:''}<div class="body">${a.body}</div><div class="window-statusbar"><span>${a.st}</span></div>${['n','s','e','w','ne','nw','se','sw'].map(d=>`<div class="rz" data-d="${d}"></div>`).join('')}`;D.appendChild(w)}
+const W=id=>document.getElementById('win-'+id);
+const tray=()=>{const T=$('#taskbar-windows');T.innerHTML='';Object.keys(APPS).forEach(id=>{const w=W(id);if(w.style.display=='flex'||w.dataset.min){const t=document.createElement('div');t.className='taskbar-tab'+(act==id&&!w.dataset.min?' active':'');t.innerHTML=`<img src="${APPS[id].i}" alt=""><span>${APPS[id].t}</span>`;t.onclick=()=>{if(w.dataset.min){w.dataset.min='';w.style.display='flex';front(id)}else if(act==id)mini(id);else front(id)};T.appendChild(t)}})};
+const front=id=>{const w=W(id);if(!w)return;act=id;w.style.zIndex=++z;document.querySelectorAll('.xp-window[id]').forEach(e=>{e.classList.toggle('active',e==w);e.classList.toggle('inactive',e!=w)});tray()};
+const open=id=>{const w=W(id);w.style.display='flex';w.dataset.min='';front(id);snd('Restore')};
+const close=id=>{const w=W(id);w.style.display='none';w.dataset.min='';snd('Menu Command');tray()};
+const mini=id=>{const w=W(id);w.dataset.min='1';w.style.display='none';snd('Minimize');tray()};
+const maxi=id=>{const w=W(id);if(w.dataset.max){Object.assign(w.style,JSON.parse(w.dataset.max));delete w.dataset.max}else{const c=w.style;w.dataset.max=JSON.stringify({left:c.left,top:c.top,width:c.width,height:c.height});Object.assign(c,{left:0,top:0,width:'100%',height:'calc(100% - 36px)'})}front(id)};
+D.addEventListener('click',e=>{const b=e.target.closest('.win-btn');if(!b)return;const id=b.closest('.xp-window').id.slice(4);b.classList.contains('close')?close(id):b.classList.contains('min')?mini(id):maxi(id)});
+const edge=(w,e)=>{const r=w.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,b=8;return(y<b?'n':y>r.height-b?'s':'')+(x<b?'w':x>r.width-b?'e':'')};
+const rzDir=e=>{const h=e.target.closest('.rz');if(h)return h.dataset.d;const w=e.target;return w.classList&&w.classList.contains('xp-window')&&w.id?edge(w,e):''};
+D.addEventListener('pointerdown',e=>{const w=e.target.closest('.xp-window');if(w&&w.id)front(w.id.slice(4));
+ const d=rzDir(e);if(d&&w.id&&!w.dataset.max){w.style.maxWidth=w.style.maxHeight='none';rz={w,d,x:e.clientX,y:e.clientY,l:w.offsetLeft,t:w.offsetTop,wd:w.offsetWidth,ht:w.offsetHeight};D.classList.add('is-dragging');e.preventDefault();return}const tb=e.target.closest('.window-titlebar');if(!tb||e.target.closest('.win-btn'))return;const x=tb.parentElement;if(x.dataset.max)return;dr={w:x,x:e.clientX,y:e.clientY,l:x.offsetLeft,t:x.offsetTop};D.classList.add('is-dragging');e.preventDefault()});
+document.addEventListener('pointermove',e=>{
+ if(rz){const{w,d,x,y,l,t,wd,ht}=rz,dx=e.clientX-x,dy=e.clientY-y,R=D.getBoundingClientRect(),MW=220,MH=140;let L=l,T=t,Wd=wd,H=ht;
+  if(d.includes('e'))Wd=Math.max(MW,Math.min(wd+dx,R.width-l));
+  if(d.includes('s'))H=Math.max(MH,Math.min(ht+dy,R.height-36-t));
+  if(d.includes('w')){Wd=Math.max(MW,Math.min(wd-dx,l+wd));L=l+wd-Wd}
+  if(d.includes('n')){H=Math.max(MH,Math.min(ht-dy,t+ht));T=t+ht-H}
+  Object.assign(w.style,{left:L+'px',top:T+'px',width:Wd+'px',height:H+'px'});return}
+ if(!dr){const w=e.target;if(w.classList&&w.classList.contains('xp-window')&&w.id){const d=w.dataset.max?'':edge(w,e);w.style.cursor=d?d+'-resize':''}return}const r=D.getBoundingClientRect();dr.w.style.left=Math.max(0,Math.min(r.width-80,dr.l+e.clientX-dr.x))+'px';dr.w.style.top=Math.max(0,Math.min(r.height-40,dr.t+e.clientY-dr.y))+'px'});
+document.addEventListener('pointerup',()=>{dr=null;rz=null;D.classList.remove('is-dragging')});
+/* XP style message boxes */
+const dlg=(title,text,btns=['OK'],icon=INFO,cb)=>{const d=document.createElement('div');d.className='xp-window dlg';d.style.cssText=`width:350px;left:${230+Math.random()*90|0}px;top:${120+Math.random()*120|0}px;z-index:${z+=2}`;
+ d.innerHTML=`<div class="window-titlebar"><img src="${icon}" alt=""><div class="window-title-text">${title}</div></div><div class="dc"><img src="${icon}" alt=""><div>${text}</div></div><div class="db">${btns.map((b,i)=>`<button class="xp-btn" data-i="${i}">${b}</button>`).join('')}</div>`;
+ d.onclick=e=>{const b=e.target.closest('button');if(!b)return;d.remove();cb&&cb(+b.dataset.i)};D.appendChild(d);return d};
+/* story link: the novel (iframe) posts {need}/{fx}; we answer {done}/{play} */
+const vn=m=>{try{$('#vn').contentWindow.postMessage(m,'*')}catch(e){}};
+const done=k=>{if(M==k){M=null;vn({done:k})}};
+const cls=(c,ms)=>{D.classList.add(c);setTimeout(()=>D.classList.remove(c),ms)};
+const ERR=['mika.exe は応答していません。','ミカ「にげないで。」','ミカ「うしろ。」','Critical Stop: 13','ミカ「見てるよ。」','mika.exe: ミカがいます。'];
+const spawn=()=>{if(nd++>40)return;errSnd();dlg('mika.exe',ERR[Math.random()*ERR.length|0],['OK'],ERRI,()=>{spawn();spawn()})};
+const FX={
+ shake:()=>{cls('shake',500);tone(80,.4,'sawtooth',.08)},
+ glitch:()=>{cls('glitch',700);tone(60,.6,'sawtooth',.08);tone(1500,.1,'square',.03,.1)},
+ hush:()=>cls('hush',1100),
+ takeover:()=>{TAKEN=1;D.classList.add('taken');$('#start-txt').textContent='mika';$('#tray-clock').textContent='00:00';drone();tone(40,1.5,'sawtooth',.1)},
+ errors:()=>{for(let i=0;i<10;i++)setTimeout(spawn,i*350)},
+ bsod:()=>{const b=$('#bsod');b.style.display='block';b.textContent='A problem has been detected and Windows has been shut down to prevent damage to your computer.\n\nMIKA_IS_IN_CONTROL\n\n*** STOP: 0x0000000D (0x00000001, 0x4D494B41, 0x00000000, 0x0000000D)\n\nミカ「おやすみ。…もう、ぜんぶ、わたしの。」\n\n(click to restart. she will be waiting.)';tone(110,1.5,'sawtooth',.1);b.onclick=()=>location.reload()},
+ floppy:()=>{const d=dlg('Copying...','mika.exe → A:\\<div class="pb"><i></i></div>',[],'icons/icon_3_12.png'),i=d.querySelector('i');let p=0;const t=setInterval(()=>{p+=4;i.style.width=p+'%';tone(200+Math.random()*80,.05,'square',.02);if(p>=100){clearInterval(t);setTimeout(()=>d.remove(),400)}},90)}
+};
+onmessage=e=>{const m=e.data||{};if(m.need)M=m.need;if(m.fx&&FX[m.fx])FX[m.fx]()};
+/* programs */
+const area=$('#np-area');area.value=CFG;
+$('#np-save').onclick=()=>{const ok=/sandbox\s*=\s*OFF/i.test(area.value);W('notepad').querySelector('.window-statusbar span').textContent='Saved.';snd('Ding');if(ok)done('notepad')};
+let sel=null;const tm=W('taskmgr').querySelector('table'),procs=PROC.slice();
+const drawTm=()=>{tm.querySelectorAll('tr:not(:first-child)').forEach(r=>r.remove());procs.forEach(p=>{const r=document.createElement('tr');r.innerHTML=p.map(c=>`<td>${c}</td>`).join('');r.onclick=()=>{sel=p[0];tm.querySelectorAll('tr').forEach(x=>x.classList.remove('sel'));r.classList.add('sel')};tm.appendChild(r)})};drawTm();
+const kill=n=>{const i=procs.findIndex(p=>p[0]==n);if(i>=0)procs.splice(i,1);sel=null;drawTm()};
+$('#tm-end').onclick=()=>{if(!sel)return;const n=sel;dlg('Task Manager Warning','WARNING: Terminating a process can cause undesired results including loss of data and system instability.<br><br>Do you want to end <b>'+n+'</b>?',['Yes','No'],'icons/icon_7_4.png',y=>{if(y)return;
+ if(n=='watchdog.exe'){kill(n);done('taskmgr')}
+ else if(n=='mika.exe'){kill(n);vn({play:'killed'})}
+ else if(n=='explorer.exe'){$('#taskbar').style.visibility='hidden';setTimeout(()=>{$('#taskbar').style.visibility='';dlg('Windows','explorer.exe was restarted.',['OK'])},1500)}
+ else dlg('Task Manager Warning','Unable to terminate process.<br>Access is denied.',['OK'],ERRI)})};
+D.addEventListener('click',e=>{const c=e.target.closest('[data-cp]');if(c){if(c.dataset.cp=='net')open('net');else dlg('Control Panel','This item is not available.',['OK'])}
+ const d=e.target.closest('[data-dr]');if(d)dlg('My Computer',d.dataset.dr+':\\ is not accessible.<br>The device is not ready.',['OK'],ERRI)});
+$('#net-b').onclick=()=>{if(NET)return;NET=1;$('#net-s').textContent='Status: Connected, 100 Mbps';$('#net-b').disabled=true;$('#tray-net').style.opacity=1;tone(660,.1);tone(880,.15,'square',.04,.1);done('network')};
+const go=id=>{if(id=='bin')return dlg('Recycle Bin','Recycle Bin is empty.',['OK']);snd('Start');if(id=='mika')tone(660,.05,'square',.03);open(id);if(id=='mika'&&!$('#vn').getAttribute('src')){const f=$('#vn');f.src='novel/index.html';f.onload=()=>f.contentWindow.focus()}};
+/* desktop + start menu */
+const SM=$('#start-menu'),SB=$('#start-button'),tg=v=>{v=v===undefined?SM.style.display!='block':v;SM.style.display=v?'block':'none';SB.classList.toggle('active',v);if(v)snd('Menu Command')};
+document.querySelectorAll('[data-app]').forEach(el=>{el.addEventListener('click',()=>{tg(false);go(el.dataset.app)});el.addEventListener('pointerdown',()=>{document.querySelectorAll('.desktop-icon').forEach(i=>i.classList.remove('selected'));el.classList.add('selected')});el.addEventListener('keydown',e=>{if(e.key=='Enter')go(el.dataset.app)})});
+SB.addEventListener('click',e=>{e.stopPropagation();tg()});
+document.addEventListener('click',e=>{if(SM.style.display=='block'&&!SM.contains(e.target)&&e.target!=SB)tg(false);if(e.target.id=='desktop')document.querySelectorAll('.desktop-icon').forEach(i=>i.classList.remove('selected'))});
+/* XP style shutdown: screen greys out -> Turn off computer dialog -> blue "Windows is shutting down" screen -> fade to black -> safe to turn off */
+const FP='<path d="M1 3q4-2 9 0v6q-5-2-9 0z" fill="#f25022"/><path d="M11 3q4 2 9 0v6q-5 2-9 0z" fill="#7fba00"/><path d="M1 10q4-2 9 0v6q-5-2-9 0z" fill="#00a4ef"/><path d="M11 10q4 2 9 0v6q-5 2-9 0z" fill="#ffb900"/>';
+document.querySelectorAll('.flagsvg').forEach(e=>e.innerHTML=FP);
+const SDd=$('#sd-dim'),SDb=$('#sd-box'),SDs=$('#sd-screen'),SDt=$('#sd-txt'),SDz=$('#sd-sleep'),BS=$('#black-screen');let sdBusy=0,sdTm=[];
+const later=(f,ms)=>sdTm.push(setTimeout(f,ms));
+const sdOpen=()=>{if(sdBusy)return;SDd.style.display=SDb.style.display='block';void SDd.offsetWidth;SDd.classList.add('on');SDb.classList.add('on')};
+const sdClose=()=>{SDd.classList.remove('on');SDb.classList.remove('on');setTimeout(()=>{if(!SDd.classList.contains('on'))SDd.style.display=SDb.style.display='none'},900)};
+const sdRun=re=>{sdBusy=1;SDb.classList.remove('on');SDb.style.display='none';
+ SDs.style.display='flex';void SDs.offsetWidth;SDs.classList.add('on');SDt.textContent='Saving your settings...';
+ later(()=>{SDt.textContent=re?'Windows is restarting...':'Windows is shutting down...'},1700);
+ later(()=>SDs.classList.add('fade'),5600);
+ later(()=>{if(re)return location.reload();BS.style.display='flex';void BS.offsetWidth;BS.style.opacity=1},6900)};
+const sdSleep=()=>{sdClose();SDz.style.display='block';void SDz.offsetWidth;SDz.classList.add('on');
+ const wake=()=>{removeEventListener('pointerdown',wake);removeEventListener('keydown',wake);SDz.classList.remove('on');setTimeout(()=>SDz.style.display='none',900)};
+ setTimeout(()=>{addEventListener('pointerdown',wake);addEventListener('keydown',wake)},900)};
+SDb.addEventListener('click',e=>{const b=e.target.closest('[data-sd]');if(!b)return;const a=b.dataset.sd;a=='stand'?sdSleep():sdRun(a=='restart')});
+$('#sd-cancel').addEventListener('click',sdClose);
+addEventListener('keydown',e=>{if(e.key=='Escape'&&SDb.classList.contains('on'))sdClose()});
+$('#btn-turnoff').addEventListener('click',()=>{tg(false);if(TAKEN){errSnd();return dlg('Windows','ミカ「だめ。どこにも、いかせない。」',['OK'],ERRI)}sdOpen()});
+$('#btn-restart').addEventListener('click',()=>location.reload());
+const ck=$('#tray-clock'),upd=()=>{if(TAKEN)return;const n=new Date();let h=n.getHours();ck.textContent=(h%12||12)+':'+String(n.getMinutes()).padStart(2,'0')+' '+(h>=12?'PM':'AM')};setInterval(upd,1000);upd();
+
+</script>
+</body>
+</html>
